@@ -18,24 +18,46 @@ namespace CounterAPI.Models
             {
                 entity.HasKey(x => x.Id);
 
-                entity.HasOne(d => d.Personalization).WithOne();
+                entity.HasIndex(x=>x.PersonalizationId).IsUnique();
 
-                entity.HasMany(d => d.TemplateLists).WithOne(p => p.User);
+                entity.HasOne(d => d.Personalization)
+                    .WithOne(p=>p.User)
+                    .HasForeignKey<User>(a => a.PersonalizationId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(d => d.TemplateLists)
+                    .WithOne(p => p.User)
+                    .HasForeignKey(b=>b.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
             });
 
             modelBuilder.Entity<TemplateList>(entity =>
             {
                 entity.HasKey(x => x.Id);
+
+                entity.HasMany(d=>d.Templates)
+                    .WithOne(p=>p.TemplateList)
+                    .HasForeignKey(a=>a.TemplateListId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Template>(entity =>
             {
                 entity.HasKey(x => x.Id);
 
-                entity.HasOne(d => d.TemplateStatistics).WithOne();
+                entity.HasIndex(a => a.TemplateSettingsId).IsUnique();
+                entity.HasIndex(a => a.TemplateStatisticsId).IsUnique();
 
-                entity.HasOne(d => d.TemplateSettings).WithOne();
+                entity.HasOne(d => d.TemplateStatistics)
+                    .WithOne(p=>p.Template)
+                    .HasForeignKey<Template>(a=>a.TemplateStatisticsId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(d => d.TemplateSettings)
+                    .WithOne(p => p.Template)
+                    .HasForeignKey<Template>(a => a.TemplateSettingsId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Personalization>(entity =>
@@ -46,6 +68,7 @@ namespace CounterAPI.Models
             modelBuilder.Entity<TemplateSettings>(entity =>
             {
                 entity.HasKey(x => x.Id);
+
             });
 
             modelBuilder.Entity<TemplateStatistics>(entity =>

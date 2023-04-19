@@ -24,8 +24,8 @@ namespace CounterAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-          if (_context.Users == null)
-          {
+            if (_context.Users == null)
+            {
               return NotFound();
             }
             var users = await _context.Users

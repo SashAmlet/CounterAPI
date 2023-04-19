@@ -7,5 +7,6 @@
         public int MinValue { get; set; }
         public int MaxValue { get; set; }
         public bool Fructions { get; set; }
+        public Template? Template { get; set; }
     }
 }

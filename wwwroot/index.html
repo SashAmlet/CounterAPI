@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Add User</title>
+</head>
+<body>
+    <h3>Add User</h3>
+    <form action="javascript:void(0);" method="POST" onsubmit="addUser()">
+        <input type="text" id="add-name" placeholder="New User name">
+        <input type="radio" id="add-notification" placeholder="New User notifications">
+        <input type="text" id="add-theme" placeholder="New User theme">
+        <input type="text" id="add-language" placeholder="New User language">
+        <input type="submit" value="Add">
+    </form>
+
+    <div id="editUser">
+        <h3>Edit</h3>
+        <form action="javascript:void(0);" onsubmit="updateUser()">
+            <input type="hidden" id="edit-id">
+            <input type="text" id="edit-name" placeholder="Edit User name">
+            <input type="radio" id="edit-notification" placeholder="Edit User notifications">
+            <input type="text" id="edit-theme" placeholder="Edit User theme">
+            <input type="text" id="edit-language" placeholder="Edit User language">
+            <input type="submit" value="Save">
+            <a onclick="closeInput()" aria-label="Close">&#10006;</a>
+        </form>
+    </div>
+
+    <p id="counter"></p>
+
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Notifications</th>
+            <th>Language</th>
+            <th>Theme</th>
+        </tr>
+        <tbody id="users"></tbody>
+    </table>
+
+    <script src="js/AddUser.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        getUsers();
+    </script>
+</body>
+</html>

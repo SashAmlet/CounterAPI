@@ -5,24 +5,23 @@
 namespace CounterAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class _25042023_0 : Migration
+    public partial class _1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Personalizations",
+                name: "Languages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Notifications = table.Column<bool>(type: "bit", nullable: false),
-                    Theme = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Language = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UkranianWord = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EnglishWord = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Personalizations", x => x.Id);
+                    table.PrimaryKey("PK_Languages", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -56,45 +55,68 @@ namespace CounterAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Languages",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Ukranian = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    English = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PersonalizationId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Languages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Languages_Personalizations_PersonalizationId",
-                        column: x => x.PersonalizationId,
-                        principalTable: "Personalizations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Themes",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    White = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Dark = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PersonalizationId = table.Column<int>(type: "int", nullable: false)
+                    WhiteWord = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DarkWord = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Themes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserLanguages",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserLanguages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserThemes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserThemes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Personalizations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Notifications = table.Column<bool>(type: "bit", nullable: false),
+                    LanguageId = table.Column<int>(type: "int", nullable: false),
+                    ThemeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Personalizations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Themes_Personalizations_PersonalizationId",
-                        column: x => x.PersonalizationId,
-                        principalTable: "Personalizations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Personalizations_UserLanguages_LanguageId",
+                        column: x => x.LanguageId,
+                        principalTable: "UserLanguages",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Personalizations_UserThemes_ThemeId",
+                        column: x => x.ThemeId,
+                        principalTable: "UserThemes",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -173,9 +195,14 @@ namespace CounterAPI.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Languages_PersonalizationId",
-                table: "Languages",
-                column: "PersonalizationId");
+                name: "IX_Personalizations_LanguageId",
+                table: "Personalizations",
+                column: "LanguageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Personalizations_ThemeId",
+                table: "Personalizations",
+                column: "ThemeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TemplateLists_UserId",
@@ -198,11 +225,6 @@ namespace CounterAPI.Migrations
                 table: "Templates",
                 column: "TemplateStatisticsId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Themes_PersonalizationId",
-                table: "Themes",
-                column: "PersonalizationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_PersonalizationId",
@@ -237,6 +259,12 @@ namespace CounterAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Personalizations");
+
+            migrationBuilder.DropTable(
+                name: "UserLanguages");
+
+            migrationBuilder.DropTable(
+                name: "UserThemes");
         }
     }
 }

@@ -12,8 +12,8 @@ function getUsers() {
 function addUser() {
     // дістаю відповідні елементи з Index.html, в яких я пишу нову інфу
     const addNameTextbox = document.getElementById('add-name');
-    const addThemeTextbox = document.getElementById('add-theme');
-    const addLanguageTextbox = document.getElementById('add-language');
+    //const addThemeTextbox = document.getElementById('add-theme');
+    //const addLanguageTextbox = document.getElementById('add-language');
     const addNotificationRadiobox = document.getElementById('add-notification');
     var _notifications = false;
     if (addNotificationRadiobox.checked)
@@ -27,8 +27,10 @@ function addUser() {
         personalization: {
             id: 0,
             notifications: _notifications,
-            theme: addThemeTextbox.value.trim(),
-            language: addLanguageTextbox.value.trim(),
+            userThemeId: 0,
+            userTheme: null,
+            userLanguageId: 0,
+            userLanguage: null,
             userId: 0,
             user: null
         }
@@ -49,8 +51,8 @@ function addUser() {
         .then(() => { // чистимо параметри
             getUsers();
             addNameTextbox.value = '';
-            addThemeTextbox.value = '';
-            addLanguageTextbox.value = '';
+            /*addThemeTextbox.value = '';
+            addLanguageTextbox.value = '';*/
             _notifications = false;
         })
         .catch(error => console.error('Unable to add user.', error));
@@ -72,8 +74,8 @@ function displayEditForm(id) {
     document.getElementById('edit-name').value = user.name;
     document.getElementById('edit-pers-id').value = user.personalizationId;
     document.getElementById('edit-notification').checked = user.personalization.notifications;
-    document.getElementById('edit-theme').value = user.personalization.theme;
-    document.getElementById('edit-language').value = user.personalization.language;
+    /*document.getElementById('edit-theme').value = user.personalization.theme;
+    document.getElementById('edit-language').value = user.personalization.language;*/
     document.getElementById('editForm').style.display = 'block';
 }
 
@@ -81,6 +83,8 @@ function updateUser() {
     // дістаю дані про user з блоку edit
     const userId = document.getElementById('edit-user-id').value;
     const persId = document.getElementById('edit-pers-id').value;
+    const languageId = document.getElementById('edit-language-id').value;
+    const themeId = document.getElementById('edit-theme-id').value;
     var notif = document.getElementById('edit-notification').checked;
 
     const user = {
@@ -90,9 +94,11 @@ function updateUser() {
         templateLists: null,
         personalization: {
             id: parseInt(persId, 10),
+            userThemeId: parseInt(themeId, 10),
+            userTheme: null,
+            userLanguageId: parseInt(languageId, 10),
+            userLanguage: null,
             notifications: notif,
-            theme: document.getElementById('edit-theme').value.trim(),
-            language: document.getElementById('edit-language').value.trim()
         }
     };
     console.info(JSON.stringify(user));

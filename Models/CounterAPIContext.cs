@@ -61,45 +61,14 @@ namespace CounterAPI.Models
                 entity.HasKey(x => x.Id);
 
                 entity.HasOne(d => d.Language)
-                    .WithOne(p => p.Personalization)
-                    .HasForeignKey<Personalization>(a => a.LanguageId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .WithMany(p => p.Personalizations)
+                    .HasForeignKey(a=>a.LanguageId)
+                    .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasOne(d => d.Theme)
-                    .WithOne(p => p.Personalization)
-                    .HasForeignKey<Personalization>(a => a.ThemeId)
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            modelBuilder.Entity<TemplateSettings>(entity =>
-            {
-                entity.HasKey(x => x.Id);
-
-            });
-
-            modelBuilder.Entity<TemplateStatistics>(entity =>
-            {
-                entity.HasKey(x => x.Id);
-            });
-
-            modelBuilder.Entity<UserLanguage>(entity =>
-            {
-                entity.HasKey(x => x.Id);
-            });
-
-            modelBuilder.Entity<UserTheme>(entity =>
-            {
-                entity.HasKey(x => x.Id);
-            });
-
-            modelBuilder.Entity<Languages>(entity =>
-            {
-                entity.HasKey(x => x.Id);
-            });
-
-            modelBuilder.Entity<Themes>(entity =>
-            {
-                entity.HasKey(x => x.Id);
+                    .WithMany(p => p.Personalizations)
+                    .HasForeignKey(a => a.ThemeId)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
         }
         public virtual DbSet<User> Users { get; set; }
@@ -108,8 +77,8 @@ namespace CounterAPI.Models
         public virtual DbSet<TemplateStatistics> TemplateStatistics { get; set; }
         public virtual DbSet<TemplateSettings> TemplateSettings { get; set; }
         public virtual DbSet<Personalization> Personalizations { get; set; }
-        public virtual DbSet<UserTheme> UserThemes { get; set; }
-        public virtual DbSet<UserLanguage> UserLanguages { get; set; }
+        public virtual DbSet<ThemeList> UserThemes { get; set; }
+        public virtual DbSet<LanguageList> UserLanguages { get; set; }
         public virtual DbSet<Themes> Themes { get; set; }
         public virtual DbSet<Languages> Languages { get; set; }
 

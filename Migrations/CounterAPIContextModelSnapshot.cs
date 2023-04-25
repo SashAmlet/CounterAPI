@@ -21,7 +21,7 @@ namespace CounterAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CounterAPI.Models.Language", b =>
+            modelBuilder.Entity("CounterAPI.Models.LanguageList", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -29,10 +29,29 @@ namespace CounterAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("English")
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Ukranian")
+                    b.HasKey("Id");
+
+                    b.ToTable("UserLanguages");
+                });
+
+            modelBuilder.Entity("CounterAPI.Models.Languages", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EnglishWord")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UkranianWord")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -48,18 +67,20 @@ namespace CounterAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Language")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("LanguageId")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Notifications")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Theme")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ThemeId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("LanguageId");
+
+                    b.HasIndex("ThemeId");
 
                     b.ToTable("Personalizations");
                 });
@@ -168,7 +189,7 @@ namespace CounterAPI.Migrations
                     b.ToTable("TemplateStatistics");
                 });
 
-            modelBuilder.Entity("CounterAPI.Models.Theme", b =>
+            modelBuilder.Entity("CounterAPI.Models.ThemeList", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -176,10 +197,29 @@ namespace CounterAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Dark")
+                    b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("White")
+                    b.HasKey("Id");
+
+                    b.ToTable("UserThemes");
+                });
+
+            modelBuilder.Entity("CounterAPI.Models.Themes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DarkWord")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("WhiteWord")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -208,6 +248,25 @@ namespace CounterAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CounterAPI.Models.Personalization", b =>
+                {
+                    b.HasOne("CounterAPI.Models.LanguageList", "Language")
+                        .WithMany("Personalizations")
+                        .HasForeignKey("LanguageId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("CounterAPI.Models.ThemeList", "Theme")
+                        .WithMany("Personalizations")
+                        .HasForeignKey("ThemeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Language");
+
+                    b.Navigation("Theme");
                 });
 
             modelBuilder.Entity("CounterAPI.Models.Template", b =>
@@ -259,6 +318,11 @@ namespace CounterAPI.Migrations
                     b.Navigation("Personalization");
                 });
 
+            modelBuilder.Entity("CounterAPI.Models.LanguageList", b =>
+                {
+                    b.Navigation("Personalizations");
+                });
+
             modelBuilder.Entity("CounterAPI.Models.Personalization", b =>
                 {
                     b.Navigation("User");
@@ -277,6 +341,11 @@ namespace CounterAPI.Migrations
             modelBuilder.Entity("CounterAPI.Models.TemplateStatistics", b =>
                 {
                     b.Navigation("Template");
+                });
+
+            modelBuilder.Entity("CounterAPI.Models.ThemeList", b =>
+                {
+                    b.Navigation("Personalizations");
                 });
 
             modelBuilder.Entity("CounterAPI.Models.User", b =>

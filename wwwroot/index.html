@@ -9,8 +9,8 @@
     <form action="javascript:void(0);" method="POST" onsubmit="addUser()">
         <input type="text" id="add-name" placeholder="New User name">
         <input type="checkbox" id="add-notification" placeholder="New User notifications">
-        <input type="text" id="add-theme" placeholder="New User theme">
-        <input type="text" id="add-language" placeholder="New User language">
+        <!--<input type="text" id="add-theme" placeholder="New User theme">
+        <input type="text" id="add-language" placeholder="New User language">-->
         <input type="submit" value="Add">
     </form>
 
@@ -19,10 +19,12 @@
         <form action="javascript:void(0);" onsubmit="updateUser()">
             <input type="hidden" id="edit-user-id">
             <input type="hidden" id="edit-pers-id">
+            <input type="hidden" id="edit-language-id">
+            <input type="hidden" id="edit-theme-id">
             <input type="text" id="edit-name" placeholder="Edit User name">
             <input type="checkbox" id="edit-notification" placeholder="Edit User notifications">
-            <input type="text" id="edit-theme" placeholder="Edit User theme">
-            <input type="text" id="edit-language" placeholder="Edit User language">
+            <!--<input type="text" id="edit-theme" placeholder="Edit User theme">
+    <input type="text" id="edit-language" placeholder="Edit User language">-->
             <input type="submit" value="Save">
             <a onclick="closeInput()" aria-label="Close">&#10006;</a>
         </form>

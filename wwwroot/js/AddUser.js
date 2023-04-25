@@ -117,7 +117,6 @@ function closeInput() {
     document.getElementById('editForm').style.display = 'none';
 }
 
-
 function _displayUsers(data) {
     const tBody = document.getElementById('users'); // знаходжу місце, куди вставляти інфу по юзерам
     tBody.innerHTML = '';

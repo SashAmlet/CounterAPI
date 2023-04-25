@@ -112,13 +112,13 @@ namespace CounterAPI.Controllers
             {
                 return NotFound();
             }
-            var user = await _context.Users.FindAsync(id);
+            var user = await _context.Users.Where(a=>a.Id == id).Include(a=>a.Personalization).Include(b=>b.TemplateLists).FirstOrDefaultAsync();
             if (user == null)
             {
                 return NotFound();
             }
 
-            _context.Users.Remove(user);
+            _context.Remove(user);
             await _context.SaveChangesAsync();
 
             return NoContent();

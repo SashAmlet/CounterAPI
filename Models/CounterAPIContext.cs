@@ -6,7 +6,7 @@ namespace CounterAPI.Models
     {
         public CounterAPIContext(DbContextOptions<CounterAPIContext> options): base(options)
         {
-            Database.EnsureCreated();        
+            // замість Database.EnsureCreated(); треба спочатку створювати міграцію, а потім прописувати update-database
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -59,6 +59,16 @@ namespace CounterAPI.Models
             modelBuilder.Entity<Personalization>(entity =>
             {
                 entity.HasKey(x => x.Id);
+
+                entity.HasOne(d => d.Language)
+                    .WithOne(p => p.Personalization)
+                    .HasForeignKey<Personalization>(a => a.LanguageId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(d => d.Theme)
+                    .WithOne(p => p.Personalization)
+                    .HasForeignKey<Personalization>(a => a.ThemeId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<TemplateSettings>(entity =>
@@ -72,18 +82,24 @@ namespace CounterAPI.Models
                 entity.HasKey(x => x.Id);
             });
 
-            modelBuilder.Entity<Language>(entity =>
+            modelBuilder.Entity<UserLanguage>(entity =>
             {
                 entity.HasKey(x => x.Id);
-                entity.Property(a => a.Ukranian).IsRequired(false);
-                entity.Property(a => a.English).IsRequired(false);
             });
 
-            modelBuilder.Entity<Theme>(entity =>
+            modelBuilder.Entity<UserTheme>(entity =>
             {
                 entity.HasKey(x => x.Id);
-                entity.Property(a => a.White).IsRequired(false);
-                entity.Property(a => a.Dark).IsRequired(false);
+            });
+
+            modelBuilder.Entity<Languages>(entity =>
+            {
+                entity.HasKey(x => x.Id);
+            });
+
+            modelBuilder.Entity<Themes>(entity =>
+            {
+                entity.HasKey(x => x.Id);
             });
         }
         public virtual DbSet<User> Users { get; set; }
@@ -92,8 +108,10 @@ namespace CounterAPI.Models
         public virtual DbSet<TemplateStatistics> TemplateStatistics { get; set; }
         public virtual DbSet<TemplateSettings> TemplateSettings { get; set; }
         public virtual DbSet<Personalization> Personalizations { get; set; }
-        public virtual DbSet<Theme> Themes { get; set; }
-        public virtual DbSet<Language> Languages { get; set; }
+        public virtual DbSet<UserTheme> UserThemes { get; set; }
+        public virtual DbSet<UserLanguage> UserLanguages { get; set; }
+        public virtual DbSet<Themes> Themes { get; set; }
+        public virtual DbSet<Languages> Languages { get; set; }
 
     }
 }

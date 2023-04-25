@@ -4,8 +4,10 @@
     {
         public int Id { get; set; }
         public bool Notifications { get; set; }
-        public string Theme { get; set; } = null!;
-        public string Language { get; set; } = null!;
+        public int ThemeId { get; set; }
+        public int LanguageId { get; set; }
+        public UserTheme? Theme { get; set; } = null!;
+        public UserLanguage? Language { get; set; } = null!;
         public User? User { get; set; }
     }
 }

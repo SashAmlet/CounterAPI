@@ -27,10 +27,10 @@ function addUser() {
         personalization: {
             id: 0,
             notifications: _notifications,
-            userThemeId: 0,
-            userTheme: null,
-            userLanguageId: 0,
-            userLanguage: null,
+            languageId: 1,
+            language: null,
+            themeId: 1,
+            theme: null,
             userId: 0,
             user: null
         }

@@ -1,6 +1,6 @@
 ﻿namespace CounterAPI.Models
 {
-    public partial class TemplateList
+    public partial class TemplateList : IEntity
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;

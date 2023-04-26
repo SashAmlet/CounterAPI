@@ -1,10 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CounterAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace CounterAPI.Models
+namespace CounterAPI.Context
 {
-    public class CounterAPIContext: DbContext
+    public class CounterAPIContext : DbContext
     {
-        public CounterAPIContext(DbContextOptions<CounterAPIContext> options): base(options)
+        public CounterAPIContext(DbContextOptions<CounterAPIContext> options) : base(options)
         {
             // замість Database.EnsureCreated(); треба спочатку створювати міграцію, а потім прописувати update-database
         }
@@ -19,7 +20,7 @@ namespace CounterAPI.Models
                 entity.HasKey(x => x.Id);
 
                 entity.HasOne(d => d.Personalization)
-                    .WithOne(p=>p.User)
+                    .WithOne(p => p.User)
                     .HasForeignKey<Personalization>(a => a.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
 
@@ -45,8 +46,8 @@ namespace CounterAPI.Models
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.TemplateStatistics)
-                    .WithOne(p=>p.Template)
-                    .HasForeignKey<TemplateStatistics>(a=>a.TemplateId)
+                    .WithOne(p => p.Template)
+                    .HasForeignKey<TemplateStatistics>(a => a.TemplateId)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.TemplateSettings)
@@ -61,7 +62,7 @@ namespace CounterAPI.Models
 
                 entity.HasOne(d => d.Language)
                     .WithMany(p => p.Personalizations)
-                    .HasForeignKey(a=>a.LanguageId)
+                    .HasForeignKey(a => a.LanguageId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(d => d.Theme)

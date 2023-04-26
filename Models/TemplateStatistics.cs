@@ -1,6 +1,6 @@
 ﻿namespace CounterAPI.Models
 {
-    public partial class TemplateStatistics
+    public partial class TemplateStatistics : IEntity
     {
         public int Id { get; set; }
         public int NumOfSolved { get; set; }

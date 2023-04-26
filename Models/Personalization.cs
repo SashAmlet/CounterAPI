@@ -1,6 +1,6 @@
 ﻿namespace CounterAPI.Models
 {
-    public partial class Personalization
+    public partial class Personalization : IEntity
     {
         public int Id { get; set; }
         public bool Notifications { get; set; }

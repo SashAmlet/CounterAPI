@@ -3,7 +3,7 @@
 namespace CounterAPI.Models
 {
     [ReadOnly(true)]
-    public partial class LanguageList
+    public partial class LanguageList: IEntity
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty!;

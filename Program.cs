@@ -1,4 +1,4 @@
-using CounterAPI.Models;
+using CounterAPI.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 

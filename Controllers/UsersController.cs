@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CounterAPI.Models;
+using CounterAPI.Context;
 
 namespace CounterAPI.Controllers
 {
@@ -48,7 +49,7 @@ namespace CounterAPI.Controllers
                   .Include(a => a.Personalization)
                   .Include(a => a.TemplateLists)
                   .FirstOrDefaultAsync(a => a.Id == id);
-
+                
 
             if (user == null)
             {

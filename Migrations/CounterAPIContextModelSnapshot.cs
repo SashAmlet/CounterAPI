@@ -76,11 +76,17 @@ namespace CounterAPI.Migrations
                     b.Property<int>("ThemeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("LanguageId");
 
                     b.HasIndex("ThemeId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Personalizations");
                 });
@@ -113,12 +119,6 @@ namespace CounterAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("TemplateListId");
-
-                    b.HasIndex("TemplateSettingsId")
-                        .IsUnique();
-
-                    b.HasIndex("TemplateStatisticsId")
-                        .IsUnique();
 
                     b.ToTable("Templates");
                 });
@@ -165,7 +165,13 @@ namespace CounterAPI.Migrations
                     b.Property<int>("NumOfProblems")
                         .HasColumnType("int");
 
+                    b.Property<int>("TemplateId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TemplateId")
+                        .IsUnique();
 
                     b.ToTable("TemplateSettings");
                 });
@@ -184,7 +190,13 @@ namespace CounterAPI.Migrations
                     b.Property<int>("NumOfUnsolved")
                         .HasColumnType("int");
 
+                    b.Property<int>("TemplateId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TemplateId")
+                        .IsUnique();
 
                     b.ToTable("TemplateStatistics");
                 });
@@ -244,9 +256,6 @@ namespace CounterAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonalizationId")
-                        .IsUnique();
-
                     b.ToTable("Users");
                 });
 
@@ -255,18 +264,26 @@ namespace CounterAPI.Migrations
                     b.HasOne("CounterAPI.Models.LanguageList", "Language")
                         .WithMany("Personalizations")
                         .HasForeignKey("LanguageId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("CounterAPI.Models.ThemeList", "Theme")
                         .WithMany("Personalizations")
                         .HasForeignKey("ThemeId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("CounterAPI.Models.User", "User")
+                        .WithOne("Personalization")
+                        .HasForeignKey("CounterAPI.Models.Personalization", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Language");
 
                     b.Navigation("Theme");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CounterAPI.Models.Template", b =>
@@ -277,23 +294,7 @@ namespace CounterAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CounterAPI.Models.TemplateSettings", "TemplateSettings")
-                        .WithOne("Template")
-                        .HasForeignKey("CounterAPI.Models.Template", "TemplateSettingsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CounterAPI.Models.TemplateStatistics", "TemplateStatistics")
-                        .WithOne("Template")
-                        .HasForeignKey("CounterAPI.Models.Template", "TemplateStatisticsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("TemplateList");
-
-                    b.Navigation("TemplateSettings");
-
-                    b.Navigation("TemplateStatistics");
                 });
 
             modelBuilder.Entity("CounterAPI.Models.TemplateList", b =>
@@ -307,15 +308,26 @@ namespace CounterAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CounterAPI.Models.User", b =>
+            modelBuilder.Entity("CounterAPI.Models.TemplateSettings", b =>
                 {
-                    b.HasOne("CounterAPI.Models.Personalization", "Personalization")
-                        .WithOne("User")
-                        .HasForeignKey("CounterAPI.Models.User", "PersonalizationId")
+                    b.HasOne("CounterAPI.Models.Template", "Template")
+                        .WithOne("TemplateSettings")
+                        .HasForeignKey("CounterAPI.Models.TemplateSettings", "TemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Personalization");
+                    b.Navigation("Template");
+                });
+
+            modelBuilder.Entity("CounterAPI.Models.TemplateStatistics", b =>
+                {
+                    b.HasOne("CounterAPI.Models.Template", "Template")
+                        .WithOne("TemplateStatistics")
+                        .HasForeignKey("CounterAPI.Models.TemplateStatistics", "TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Template");
                 });
 
             modelBuilder.Entity("CounterAPI.Models.LanguageList", b =>
@@ -323,24 +335,16 @@ namespace CounterAPI.Migrations
                     b.Navigation("Personalizations");
                 });
 
-            modelBuilder.Entity("CounterAPI.Models.Personalization", b =>
+            modelBuilder.Entity("CounterAPI.Models.Template", b =>
                 {
-                    b.Navigation("User");
+                    b.Navigation("TemplateSettings");
+
+                    b.Navigation("TemplateStatistics");
                 });
 
             modelBuilder.Entity("CounterAPI.Models.TemplateList", b =>
                 {
                     b.Navigation("Templates");
-                });
-
-            modelBuilder.Entity("CounterAPI.Models.TemplateSettings", b =>
-                {
-                    b.Navigation("Template");
-                });
-
-            modelBuilder.Entity("CounterAPI.Models.TemplateStatistics", b =>
-                {
-                    b.Navigation("Template");
                 });
 
             modelBuilder.Entity("CounterAPI.Models.ThemeList", b =>
@@ -350,6 +354,8 @@ namespace CounterAPI.Migrations
 
             modelBuilder.Entity("CounterAPI.Models.User", b =>
                 {
+                    b.Navigation("Personalization");
+
                     b.Navigation("TemplateLists");
                 });
 #pragma warning restore 612, 618

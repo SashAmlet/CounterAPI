@@ -18,16 +18,10 @@ namespace CounterAPI.Models
             {
                 entity.HasKey(x => x.Id);
 
-                entity.HasIndex(x=>x.PersonalizationId).IsUnique();
-
                 entity.HasOne(d => d.Personalization)
                     .WithOne(p=>p.User)
-                    .HasForeignKey<User>(a => a.PersonalizationId)
+                    .HasForeignKey<Personalization>(a => a.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasMany(d => d.TemplateLists)
-                    .WithOne(p => p.User)
-                    .HasForeignKey(b=>b.UserId);
 
             });
 
@@ -35,25 +29,30 @@ namespace CounterAPI.Models
             {
                 entity.HasKey(x => x.Id);
 
-                entity.HasMany(d=>d.Templates)
-                    .WithOne(p=>p.TemplateList)
-                    .HasForeignKey(a=>a.TemplateListId);
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.TemplateLists)
+                    .HasForeignKey(a => a.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Template>(entity =>
             {
                 entity.HasKey(x => x.Id);
 
-                entity.HasIndex(a => a.TemplateSettingsId).IsUnique();
-                entity.HasIndex(a => a.TemplateStatisticsId).IsUnique();
+                entity.HasOne(d => d.TemplateList)
+                    .WithMany(p => p.Templates)
+                    .HasForeignKey(a => a.TemplateListId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.TemplateStatistics)
                     .WithOne(p=>p.Template)
-                    .HasForeignKey<Template>(a=>a.TemplateStatisticsId);
+                    .HasForeignKey<TemplateStatistics>(a=>a.TemplateId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(d => d.TemplateSettings)
                     .WithOne(p => p.Template)
-                    .HasForeignKey<Template>(a => a.TemplateSettingsId);
+                    .HasForeignKey<TemplateSettings>(a => a.TemplateId)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Personalization>(entity =>
@@ -63,12 +62,12 @@ namespace CounterAPI.Models
                 entity.HasOne(d => d.Language)
                     .WithMany(p => p.Personalizations)
                     .HasForeignKey(a=>a.LanguageId)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(d => d.Theme)
                     .WithMany(p => p.Personalizations)
                     .HasForeignKey(a => a.ThemeId)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
         public virtual DbSet<User> Users { get; set; }

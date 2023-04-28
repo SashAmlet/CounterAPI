@@ -5,46 +5,25 @@
     <title>Add User</title>
 </head>
 <body>
-    <h3>Add User</h3>
-    <form action="javascript:void(0);" method="POST" onsubmit="addUser()">
-        <input type="text" id="add-name" placeholder="New User name">
-        <input type="checkbox" id="add-notification" placeholder="New User notifications">
-        <!--<input type="text" id="add-theme" placeholder="New User theme">
-        <input type="text" id="add-language" placeholder="New User language">-->
-        <input type="submit" value="Add">
-    </form>
-
-    <div id="editForm" style="display:none">
-        <h3>Edit</h3>
-        <form action="javascript:void(0);" onsubmit="updateUser()">
-            <input type="hidden" id="edit-user-id">
-            <input type="hidden" id="edit-pers-id">
-            <input type="hidden" id="edit-language-id">
-            <input type="hidden" id="edit-theme-id">
-            <input type="text" id="edit-name" placeholder="Edit User name">
-            <input type="checkbox" id="edit-notification" placeholder="Edit User notifications">
-            <!--<input type="text" id="edit-theme" placeholder="Edit User theme">
-    <input type="text" id="edit-language" placeholder="Edit User language">-->
-            <input type="submit" value="Save">
-            <a onclick="closeInput()" aria-label="Close">&#10006;</a>
-        </form>
+    <div id="indexBody">
     </div>
 
-    <p id="counter"></p>
-
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Notifications</th>
-            <th>Language</th>
-            <th>Theme</th>
-        </tr>
-        <tbody id="users"></tbody>
-    </table>
-
+    <script src="js/ShowIndex.js" asp-append-version="true"></script>
     <script src="js/AddUser.js" asp-append-version="true"></script>
+
     <script type="text/javascript">
-        getUsers();
+        Promise.all([
+            fetch(PageItemsUri)
+                .then(response => response.json()),
+            fetch(uri)
+                .then(response => response.json())
+        ])
+            .then(([itemsData, usersData]) => {
+                _displayItems(itemsData);
+                _displayUsers(usersData);
+            })
+            .catch(error => console.error('Unable to get data.', error));
+
     </script>
 </body>
 </html>

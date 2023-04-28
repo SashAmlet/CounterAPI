@@ -4,32 +4,45 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CounterAPI.Repository
 {
-    public class Repository<T> : IRepository<T> where T : class, IEntity
+    public class Repository<T, _context> : IRepository<T, _context> where T : class, IEntity where _context : DbContext 
     {
-        private readonly CounterAPIContext context;
-        public Repository(CounterAPIContext context)
+        private readonly _context context;
+        public Repository(_context context)
         {
             this.context = context;
         }
-        public async Task<IEnumerable<T>?> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return await context.Set<T>().ToListAsync();
-        }
-        
-        public async Task<T?> GetById(int id)
-        {
-            return await context.Set<T>().FindAsync(id);
-        }
+            var entities = await context.Set<T>().ToListAsync();
 
-        public async Task Add(T entity)
+            if (entities == null)
+            {
+                throw new ArgumentNullException("The GetAll failed, there are no such an entities");
+            }
+            return entities;
+        }        
+        public async Task<T> GetByIdAsync(int id)
+        {
+            var entity = await context.Set<T>().FindAsync(id);
+
+            if (entity == null)
+            {
+                throw new ArgumentNullException("The GetById failed, there is no such entity");
+            }
+            return entity;
+        }
+        public async Task AddAsync(T entity)
         {
             await context.Set<T>().AddAsync(entity);
             await context.SaveChangesAsync();
         }
 
-        public async Task Update(int id, T entity)
+        public async Task UpdateAsync(int id, T entity)
         {
-            context.Set<T>().Entry(entity).State = EntityState.Modified;
+            if (id != entity.Id)
+                throw new ArgumentException("The id value does not match the entity.Id value");
+
+            context.Set<T>().Update(entity);
 
             try
             {
@@ -39,7 +52,7 @@ namespace CounterAPI.Repository
             {
                 if (!TExists(id))
                 {
-                    throw new Exception("The update failed, there is no such entity");
+                    throw new ArgumentNullException("The update failed, there is no such entity");
                 }
                 else
                 {
@@ -47,13 +60,12 @@ namespace CounterAPI.Repository
                 }
             }
         }
-
-        public async Task Delete(int id)
+        public async Task DeleteAsync(int id)
         {
             var entity = await context.Set<T>().FindAsync(id);
             if (entity == null)
             {
-                throw new Exception("The delete failed, there is no such entity");
+                throw new ArgumentNullException("The delete failed, there is no such entity");
             }
             context.Remove(entity);
             await context.SaveChangesAsync();

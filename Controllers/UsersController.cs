@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CounterAPI.Models;
 using CounterAPI.Context;
+using CounterAPI.Repository;
 
 namespace CounterAPI.Controllers
 {
@@ -16,47 +17,48 @@ namespace CounterAPI.Controllers
     {
         private readonly CounterAPIContext _context;
 
-        public UsersController(CounterAPIContext context)
+        private readonly IRepository<User, CounterAPIContext> _userRepository;
+
+        public UsersController(CounterAPIContext context, IRepository<User, CounterAPIContext> userRepository)
         {
             _context = context;
+            _userRepository = userRepository;
         }
 
         // GET: api/Users
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            if (_context.Users == null)
+            try
             {
-              return NotFound();
+                return Ok(await _userRepository.GetAllAsync());
             }
-            var users = await _context.Users
-                  .Include(a => a.Personalization)
-                  .Include(a => a.TemplateLists)
-                  .ToListAsync();
-            return users;
+            catch (ArgumentNullException)
+            {
+                return NotFound();
+            }
+            catch 
+            {
+                throw;
+            }
         }
 
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
-            if (_context.Users == null)
+            try
+            {
+                return Ok(await _userRepository.GetByIdAsync(id));
+            }
+            catch (ArgumentNullException)
             {
                 return NotFound();
             }
-
-            var user = await _context.Users
-                  .Include(a => a.Personalization)
-                  .Include(a => a.TemplateLists)
-                  .FirstOrDefaultAsync(a => a.Id == id);
-                
-
-            if (user == null)
+            catch
             {
-                return NotFound();
+                throw;
             }
-
-            return user;
         }
 
         // PUT: api/Users/5
@@ -64,27 +66,21 @@ namespace CounterAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
-            if (id != user.Id)
+            try
+            {
+                await _userRepository.UpdateAsync(id, user);
+            }
+            catch (ArgumentNullException)
+            {
+                return NotFound();
+            }
+            catch (ArgumentException)
             {
                 return BadRequest();
             }
-
-            _context.Entry(user).State = EntityState.Modified;
-
-            try
+            catch 
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!UserExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();
@@ -93,41 +89,34 @@ namespace CounterAPI.Controllers
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult> PostUser(User user)
         {
-          if (_context.Users == null)
-          {
-              return Problem("Entity set 'CounterAPIContext.Users'  is null.");
-          }
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            if (_context.Users == null)
+            {
+                return Problem("Entity set 'CounterAPIContext.Users'  is null.");
+            }
+            await _userRepository.AddAsync(user);
 
-            return CreatedAtAction("GetUser", new { id = user.Id }, user);
+            return NoContent();
         }
 
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            if (_context.Users == null)
+            try
+            {
+                await _userRepository.DeleteAsync(id);
+            }
+            catch (ArgumentNullException)
             {
                 return NotFound();
             }
-            var user = await _context.Users.Where(a=>a.Id == id).Include(a=>a.Personalization).Include(b=>b.TemplateLists).FirstOrDefaultAsync();
-            if (user == null)
+            catch
             {
-                return NotFound();
+                throw;
             }
-
-            _context.Remove(user);
-            await _context.SaveChangesAsync();
-
             return NoContent();
-        }
-
-        private bool UserExists(int id)
-        {
-            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

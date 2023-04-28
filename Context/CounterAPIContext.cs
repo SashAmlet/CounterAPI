@@ -24,6 +24,8 @@ namespace CounterAPI.Context
                     .HasForeignKey<Personalization>(a => a.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
 
+                entity.Navigation(a => a.Personalization).AutoInclude();
+
             });
 
             modelBuilder.Entity<TemplateList>(entity =>
@@ -69,6 +71,9 @@ namespace CounterAPI.Context
                     .WithMany(p => p.Personalizations)
                     .HasForeignKey(a => a.ThemeId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Navigation(a => a.Language).AutoInclude();
+                entity.Navigation(a => a.Theme).AutoInclude();
             });
         }
         public virtual DbSet<User> Users { get; set; }

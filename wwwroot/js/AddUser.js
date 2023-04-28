@@ -9,27 +9,68 @@ function getUsers() {
         .catch(error => console.error('Unable to get users.', error));
 }
 
-function addUser() {
+async function getLanguageId(languageData) {
+    const languageIndexUrl = `api/LanguageLists/${languageData}`;
+    try {
+        const response = await fetch(languageIndexUrl);
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        }
+        throw new Error('Failed to fetch data');
+    } catch (error) {
+        console.error('Unable to get language data.', error);
+        throw error;
+    }
+}
+
+async function getThemeId(themeData) {
+    const themeIndexUrl = `api/ThemeLists/${themeData}`;
+    try {
+        const response = await fetch(themeIndexUrl);
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        }
+        throw new Error('Failed to fetch data');
+    } catch (error) {
+        console.error('Unable to get theme data.', error);
+        throw error;
+    }
+}
+
+function getUserData() {
     // дістаю відповідні елементи з Index.html, в яких я пишу нову інфу
-    const addNameTextbox = document.getElementById('add-name');
-    //const addThemeTextbox = document.getElementById('add-theme');
-    //const addLanguageTextbox = document.getElementById('add-language');
-    const addNotificationRadiobox = document.getElementById('add-notification');
+    const addNameTextbox = document.getElementById('user-input-name');
+    const addThemeTextbox = document.getElementById('user-select-theme');
+    const addLanguageTextbox = document.getElementById('user-select-language');
+    const addNotificationRadiobox = document.getElementById('user-input-notification');
     var _notifications = false;
+
     if (addNotificationRadiobox.checked)
         _notifications = true;
+    // дістаю індекс вибраної мови
+    getLanguageId(addLanguageTextbox.value).then(ldata => {
+        getThemeId(addThemeTextbox.value).then(tdata => {
+            addUser(addNameTextbox.value.trim(), _notifications, ldata, tdata)
+        }).catch(error => { error => console.error('Unable to get themeId.', error) });
+
+    }).catch(error => { error => console.error('Unable to get languageId.', error) });
+}
+
+function addUser(_name, _notifications, language, theme) {
     // формую нового user як JS об'єкт покладаючись на отриману інфу
     const user = {
         id: 0,
-        name: addNameTextbox.value.trim(),
+        name: _name,
         personalizationId: 0,
         templateLists: null,
         personalization: {
             id: 0,
             notifications: _notifications,
-            languageId: 1,
+            languageId: language,
             language: null,
-            themeId: 1,
+            themeId: theme,
             theme: null,
             userId: 0,
             user: null
@@ -41,19 +82,14 @@ function addUser() {
     // найвеселіше - відправляю HTTP запит до uri (так як нам потрібно POST, то вказуємо допоміжні параметри)
     fetch(uri, {
         method: 'POST', // вказуємо метод
-        headers: { 
+        headers: {
             'Accept': 'application/json', // так як дані можна отримувати в різних форматах, то вказуємо, що запрошені дані повинні бути у форматі json
             'Content-Type': 'application/json' // так як дані можна відправляти в різних форматах, то вказуємо, що ми відправляємо саме json, щоб сервер правильно все опрацював
         },
         body: JSON.stringify(user) // відправляємо на сервер JS об'єкт user серіалізований у json 
     })
-        .then(response => response.json()) // отримуємо результат виконання операції (200 або 201 - все ок)
         .then(() => { // чистимо параметри
             getUsers();
-            addNameTextbox.value = '';
-            /*addThemeTextbox.value = '';
-            addLanguageTextbox.value = '';*/
-            _notifications = false;
         })
         .catch(error => console.error('Unable to add user.', error));
 }
@@ -70,61 +106,72 @@ function deleteUser(id) {
 function displayEditForm(id) {
     const user = users.find(user => user.id == id);
 
-    document.getElementById('edit-user-id').value = user.id;
-    document.getElementById('edit-name').value = user.name;
-    document.getElementById('edit-pers-id').value = user.personalizationId;
-    document.getElementById('edit-notification').checked = user.personalization.notifications;
-    /*document.getElementById('edit-theme').value = user.personalization.theme;
-    document.getElementById('edit-language').value = user.personalization.language;*/
-    document.getElementById('editForm').style.display = 'block';
+    document.getElementById('user-edit-userId').value = user.id;
+    document.getElementById('user-edit-name').value = user.name;
+    document.getElementById('user-edit-persId').value = user.personalization.id;
+    document.getElementById('user-edit-notifications').checked = user.personalization.notifications;
+    document.getElementById('user-edit-theme').value = user.personalization.theme.name;
+    document.getElementById('user-edit-language').value = user.personalization.language.name;
+    document.getElementById('user-edit-div').style.display = 'block';
+
+    
 }
 
 function updateUser() {
     // дістаю дані про user з блоку edit
-    const userId = document.getElementById('edit-user-id').value;
-    const persId = document.getElementById('edit-pers-id').value;
-    const languageId = document.getElementById('edit-language-id').value;
-    const themeId = document.getElementById('edit-theme-id').value;
-    var notif = document.getElementById('edit-notification').checked;
+    const userId = document.getElementById('user-edit-userId').value;
+    const persId = document.getElementById('user-edit-persId').value;
+    const language = document.getElementById('user-edit-language').value;
+    const theme = document.getElementById('user-edit-theme').value;
+    var notif = document.getElementById('user-edit-notifications').checked;
 
-    const user = {
-        id: parseInt(userId, 10),
-        name: document.getElementById('edit-name').value.trim(),
-        personalizationId: parseInt(persId, 10),
-        templateLists: null,
-        personalization: {
-            id: parseInt(persId, 10),
-            userThemeId: parseInt(themeId, 10),
-            userTheme: null,
-            userLanguageId: parseInt(languageId, 10),
-            userLanguage: null,
-            notifications: notif,
-        }
-    };
-    console.info(JSON.stringify(user));
-    // відпаравляю HTTP запит з параметром PUT щоб змінити відповідного user
-    fetch(`${uri}/${userId}`, {
-        method: 'PUT',
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(user)
-    })
-        .then(() => getUsers()) // оноклюю таблицю з users 
-        .catch(error => console.error('Unable to update user.', error));
+    getLanguageId(language).then(ldata => {
+        getThemeId(theme).then(tdata => {
+            const user = {
+                id: parseInt(userId, 10),
+                name: document.getElementById('user-edit-name').value.trim(),
+                personalizationId: parseInt(persId, 10),
+                templateLists: null,
+                personalization: {
+                    id: parseInt(persId, 10),
+                    themeId: parseInt(tdata, 10),
+                    theme: null,
+                    languageId: parseInt(ldata, 10),
+                    language: null,
+                    notifications: notif,
+                }
+            };
+            console.info(JSON.stringify(user));
+            // відпаравляю HTTP запит з параметром PUT щоб змінити відповідного user
+            fetch(`${uri}/${userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+                .then(() => getUsers()) // оноклюю таблицю з users 
+                .catch(error => console.error('Unable to update user.', error));
 
-    closeInput();
+            closeInput();
 
-    return false;
+            return false;
+
+        }).catch(error => { error => console.error('Unable to get themeId.', error) });
+
+    }).catch(error => { error => console.error('Unable to get languageId.', error) });
+
+    
 }
 
 function closeInput() {
-    document.getElementById('editForm').style.display = 'none';
+    document.getElementById('user-edit-div').style.display = 'none';
 }
 
 function _displayUsers(data) {
-    const tBody = document.getElementById('users'); // знаходжу місце, куди вставляти інфу по юзерам
+
+    const tBody = document.getElementById('user-show-table-users'); // знаходжу місце, куди вставляти інфу по юзерам
     tBody.innerHTML = '';
 
 
@@ -154,12 +201,12 @@ function _displayUsers(data) {
             td2.appendChild(textNodeNotif);
 
             let td3 = tr.insertCell(2);
-            let textNodeTheme = document.createTextNode(user.personalization.theme);
-            td3.appendChild(textNodeTheme);
+            let textNodeLanguage = document.createTextNode(user.personalization.language.name);
+            td3.appendChild(textNodeLanguage);
 
             let td4 = tr.insertCell(3);
-            let textNodeLanguage = document.createTextNode(user.personalization.language);
-            td4.appendChild(textNodeLanguage);
+            let textNodeTheme = document.createTextNode(user.personalization.theme.name);
+            td4.appendChild(textNodeTheme);
 
             let td5 = tr.insertCell(4);
             td5.appendChild(editButton);

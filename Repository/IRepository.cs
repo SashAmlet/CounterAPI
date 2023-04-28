@@ -1,14 +1,15 @@
 ﻿using CounterAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CounterAPI.Repository
 {
-    public interface IRepository<T> where T : class, IEntity
+    public interface IRepository<T, _context> where T : class, IEntity where _context: DbContext
     {
-        Task<IEnumerable<T>?> GetAll();
-        Task<T?> GetById(int id);
-        Task Add(T entity);
-        Task Update(int id, T entity);
-        Task Delete(int id);
+        Task<IEnumerable<T>> GetAllAsync();
+        Task<T> GetByIdAsync(int id);
+        Task AddAsync(T entity);
+        Task UpdateAsync(int id, T entity);
+        Task DeleteAsync(int id);
 
     }
 }

@@ -44,12 +44,12 @@ namespace CounterAPI.Controllers
         }
 
         // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        [HttpGet("{user}")]
+        public async Task<ActionResult<User>> GetUser(string user)
         {
             try
             {
-                return Ok(await _userRepository.GetByIdAsync(id));
+                return Ok(await _context.Users.Where(a=>a.Name == user).Select(a=>a.Id).FirstOrDefaultAsync());
             }
             catch (ArgumentNullException)
             {

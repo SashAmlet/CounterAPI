@@ -25,6 +25,7 @@ namespace CounterAPI.Context
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.Navigation(a => a.Personalization).AutoInclude();
+                entity.Navigation(a => a.TemplateLists).AutoInclude();
 
             });
 
@@ -36,6 +37,8 @@ namespace CounterAPI.Context
                     .WithMany(p => p.TemplateLists)
                     .HasForeignKey(a => a.UserId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity.Navigation(a => a.User).AutoInclude();
             });
 
             modelBuilder.Entity<Template>(entity =>

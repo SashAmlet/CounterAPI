@@ -1,9 +1,9 @@
-﻿const uri = 'api/Users';
+﻿const usersUri = 'api/Users';
 let users = [];
 
 function getUsers() {
     // JS функція, за допомогою якої можна подати запит на сторінку "uri"
-    fetch(uri) // по замовченю викликаю метод GET без параметрів, тож на виході отримую набір юзерів
+    fetch(usersUri) // по замовченю викликаю метод GET без параметрів, тож на виході отримую набір юзерів
         .then(response => response.json()) // перетворюю дані в об'єкт JS
         .then(data => _displayUsers(data)) // відправляю той об'єк в функцію _displayUsers
         .catch(error => console.error('Unable to get users.', error));
@@ -80,7 +80,7 @@ function addUser(_name, _notifications, language, theme) {
 
     console.info(JSON.stringify(user));
     // найвеселіше - відправляю HTTP запит до uri (так як нам потрібно POST, то вказуємо допоміжні параметри)
-    fetch(uri, {
+    fetch(usersUri, {
         method: 'POST', // вказуємо метод
         headers: {
             'Accept': 'application/json', // так як дані можна отримувати в різних форматах, то вказуємо, що запрошені дані повинні бути у форматі json
@@ -96,7 +96,7 @@ function addUser(_name, _notifications, language, theme) {
 
 function deleteUser(id) {
     // крім до uri додаю ще id, бо видалити треба конкретного user (див. відповідний метод контроллера)
-    fetch(`${uri}/${id}`, {
+    fetch(`${usersUri}/${id}`, {
         method: 'DELETE'
     })
         .then(() => getUsers()) // після видалення оновлюю таблицю виводу.
@@ -143,7 +143,7 @@ function updateUser() {
             };
             console.info(JSON.stringify(user));
             // відпаравляю HTTP запит з параметром PUT щоб змінити відповідного user
-            fetch(`${uri}/${userId}`, {
+            fetch(`${usersUri}/${userId}`, {
                 method: 'PUT',
                 headers: {
                     'Accept': 'application/json',
@@ -209,11 +209,24 @@ function _displayUsers(data) {
             td4.appendChild(textNodeTheme);
 
             let td5 = tr.insertCell(4);
-            td5.appendChild(editButton);
+            let selectNodeTemplateLists = document.createElement('select');
+            user.templateLists.forEach(tl => {
+                let option = document.createElement('option');
+                option.value = tl.name;
+                option.text = tl.name;
+                selectNodeTemplateLists.appendChild(option);
+
+            })
+            td5.appendChild(selectNodeTemplateLists);
 
             let td6 = tr.insertCell(5);
-            td6.appendChild(deleteButton);
+            td6.appendChild(editButton);
+
+            let td7 = tr.insertCell(6);
+            td7.appendChild(deleteButton);
         });
     }
     users = data; 
+    _displayTLAddUserList(data);
 }
+

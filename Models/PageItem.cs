@@ -14,6 +14,5 @@ namespace CounterAPI.Models
         public PageItem? Parent { get; set; }
         public IEnumerable<PageItem>? Children { get; set; }
         public IEnumerable<PageItemAttribute>? Attributes { get; set; }
-        public IEnumerable<EventListener>? EventListeners { get; set; }
     }
 }

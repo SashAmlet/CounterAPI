@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;
+        public string? Description { get; set; }
         public int UserId { get; set; }
         public User? User { get; set; }
         public ICollection<Template>? Templates { get; set; } = new List<Template>();

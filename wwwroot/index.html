@@ -10,17 +10,28 @@
 
     <script src="js/ShowIndex.js" asp-append-version="true"></script>
     <script src="js/AddUser.js" asp-append-version="true"></script>
+    <script src="js/addTL.js" asp-append-version="true"></script>
+    <script src="js/UpdateLanguage_Theme.js" asp-append-version="true"></script>
 
     <script type="text/javascript">
         Promise.all([
             fetch(PageItemsUri)
                 .then(response => response.json()),
-            fetch(uri)
+            fetch(usersUri)
+                .then(response => response.json()),
+            fetch(tlUri)
+                .then(response => response.json()),
+            fetch('api/LanguageLists')
+                .then(response => response.json()),
+            fetch('api/ThemeLists')
                 .then(response => response.json())
         ])
-            .then(([itemsData, usersData]) => {
+            .then(([itemsData, usersData, tlData, languageData, themeData]) => {
                 _displayItems(itemsData);
                 _displayUsers(usersData);
+                _displayTLs(tlData);
+                _displayUserAddLanguageList(languageData);
+                _displayUserAddThemeList(themeData);
             })
             .catch(error => console.error('Unable to get data.', error));
 

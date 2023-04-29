@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CounterAPI.Context;
 using CounterAPI.Models;
+using CounterAPI.Repository;
 
 namespace CounterAPI.Controllers
 {
@@ -15,21 +16,30 @@ namespace CounterAPI.Controllers
     public class TemplateListsController : ControllerBase
     {
         private readonly CounterAPIContext _context;
+        private readonly IRepository<TemplateList, CounterAPIContext> _templateListRepository;
 
-        public TemplateListsController(CounterAPIContext context)
+        public TemplateListsController(CounterAPIContext context, IRepository<TemplateList, CounterAPIContext> templateListRepository)
         {
             _context = context;
+            _templateListRepository = templateListRepository;
         }
 
         // GET: api/TemplateLists
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TemplateList>>> GetTemplateLists()
         {
-          if (_context.TemplateLists == null)
-          {
-              return NotFound();
-          }
-            return await _context.TemplateLists.ToListAsync();
+            try
+            {
+                return Ok(await _templateListRepository.GetAllAsync());
+            }
+            catch (ArgumentNullException)
+            {
+                return NotFound();
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         // GET: api/TemplateLists/5
@@ -84,16 +94,15 @@ namespace CounterAPI.Controllers
         // POST: api/TemplateLists
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<TemplateList>> PostTemplateList(TemplateList templateList)
+        public async Task<ActionResult> PostTemplateList(TemplateList templateList)
         {
-          if (_context.TemplateLists == null)
-          {
-              return Problem("Entity set 'CounterAPIContext.TemplateLists'  is null.");
-          }
-            _context.TemplateLists.Add(templateList);
-            await _context.SaveChangesAsync();
+            if (_context.Users == null)
+            {
+                return Problem("Entity set 'CounterAPIContext.Users'  is null.");
+            }
+            await _templateListRepository.AddAsync(templateList);
 
-            return CreatedAtAction("GetTemplateList", new { id = templateList.Id }, templateList);
+            return NoContent();
         }
 
         // DELETE: api/TemplateLists/5

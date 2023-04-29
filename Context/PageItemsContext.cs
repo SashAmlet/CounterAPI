@@ -25,7 +25,6 @@ namespace CounterAPI.Context
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity.Navigation(a => a.Attributes).AutoInclude();
-                entity.Navigation(a => a.EventListeners).AutoInclude();
 
             });
 
@@ -39,21 +38,10 @@ namespace CounterAPI.Context
                     .OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<EventListener>(entity =>
-            {
-                entity.HasKey(x => x.Id);
-
-                entity.HasOne(d => d.PageItem)
-                    .WithMany(p => p.EventListeners)
-                    .HasForeignKey(a => a.PageItemId)
-                    .OnDelete(DeleteBehavior.Cascade);
-            });
-
 
         }
         public virtual DbSet<PageItem> PageItems { get; set; }
         public virtual DbSet<PageItemAttribute> PageItemAttributes { get; set; }
-        public virtual DbSet<EventListener> EventListeners { get; set; }
 
     }
 }

@@ -24,9 +24,6 @@ function _displayItems(data) {
             for (let attr of item.attributes) {
                 element.setAttribute(`${attr.firstWord}`, `${attr.secondWord}`);
             }
-            for (let listener of item.eventListeners) {
-                element.addEventListener(`${listener.firstWord}`, listener.secondWord);
-            }
             parentElement.appendChild(element);
         });
         // змінюю батьків у елементів

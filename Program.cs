@@ -16,6 +16,7 @@ builder.Services.AddDbContext<PageItemsContext>(option => option.UseSqlServer(
 builder.Services.AddScoped<IRepository<User, CounterAPIContext>,Repository<User, CounterAPIContext>>();
 builder.Services.AddScoped<IRepository<LanguageList, CounterAPIContext>, Repository<LanguageList, CounterAPIContext>>();
 builder.Services.AddScoped<IRepository<ThemeList, CounterAPIContext>, Repository<ThemeList, CounterAPIContext>>();
+builder.Services.AddScoped<IRepository<TemplateList, CounterAPIContext>, Repository<TemplateList, CounterAPIContext>>();
 builder.Services.AddScoped<IRepository<PageItem, PageItemsContext>, Repository<PageItem, PageItemsContext>>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>

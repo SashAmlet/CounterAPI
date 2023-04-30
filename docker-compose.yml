@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  counterapi:
+    image: ${DOCKER_REGISTRY-}counterapi:v1
+    ports:
+      - "5000:80"
+    build:
+      context: ./Context
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./:/src
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5003
+      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+    restart: always

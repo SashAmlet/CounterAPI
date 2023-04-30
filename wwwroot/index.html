@@ -30,8 +30,8 @@
                 _displayItems(itemsData);
                 _displayUsers(usersData);
                 _displayTLs(tlData);
-                _displayUserAddLanguageThemeList(languageData, 'user-add-language-list', 'user-select-language');
-                _displayUserAddLanguageThemeList(themeData, 'user-add-theme-list', 'user-select-theme');
+                _displayUserAddLanguageList(languageData);
+                _displayUserAddThemeList(themeData);
             })
             .catch(error => console.error('Unable to get data.', error));
 

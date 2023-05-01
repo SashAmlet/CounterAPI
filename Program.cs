@@ -7,11 +7,18 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var dbHost = Environment.GetEnvironmentVariable("DB_HOST");
+var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+var dbPassword = Environment.GetEnvironmentVariable("DB_SA_PASSWORD");
+var connectionString = $"Data Source={dbHost}; Initial Catalog={dbName}; User ID=sa; Password={dbPassword};Persist Security Info=True; Encrypt=False";
+
 builder.Services.AddDbContext<CounterAPIContext>(option => option.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection")
+    connectionString
+    /*builder.Configuration.GetConnectionString("DefaultConnection")*/
     ));
 builder.Services.AddDbContext<PageItemsContext>(option => option.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection")
+    connectionString
+    /*builder.Configuration.GetConnectionString("DefaultConnection")*/
     ));
 builder.Services.AddScoped<IRepository<User, CounterAPIContext>,Repository<User, CounterAPIContext>>();
 builder.Services.AddScoped<IRepository<LanguageList, CounterAPIContext>, Repository<LanguageList, CounterAPIContext>>();

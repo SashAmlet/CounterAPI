@@ -1,0 +1,32 @@
+version: '3.4'
+
+networks:
+  counterapp:
+
+services:
+  counterapidb:
+    container_name: CounterApi-Db
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - 8002:1433
+    environment: 
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=counterapidb_password
+    networks:
+      - counterapp
+  counterapi:
+    container_name: CounterApi-App
+    image: ${DOCKER_REGISTRY-}counterapi
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+     - 8001:80
+    depends_on: 
+      - counterapidb
+    environment:
+      - DB_HOST=counterapidb
+      - DB_NAME=CounterAPI
+      - DB_SA_PASSWORD=counterapidb_password
+    networks:
+      - counterapp

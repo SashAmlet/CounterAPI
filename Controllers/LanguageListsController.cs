@@ -17,7 +17,7 @@ namespace CounterAPI.Controllers
     {
         private readonly IExtendedRepository<LanguageList, CounterAPIContext> _languageListRepository;
 
-        public LanguageListsController(CounterAPIContext context, IExtendedRepository<LanguageList, CounterAPIContext> languageListRepository)
+        public LanguageListsController(IExtendedRepository<LanguageList, CounterAPIContext> languageListRepository)
         {
             _languageListRepository = languageListRepository;
         }

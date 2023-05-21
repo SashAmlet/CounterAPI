@@ -17,7 +17,7 @@ namespace CounterAPI.Controllers
     {
         private readonly IRepository<TemplateList, CounterAPIContext> _templateListRepository;
 
-        public TemplateListsController(CounterAPIContext context, IRepository<TemplateList, CounterAPIContext> templateListRepository)
+        public TemplateListsController(IRepository<TemplateList, CounterAPIContext> templateListRepository)
         {
             _templateListRepository = templateListRepository;
         }

@@ -18,7 +18,7 @@ namespace CounterAPI.Controllers
 
         private readonly IExtendedRepository<User, CounterAPIContext> _userRepository;
 
-        public UsersController(CounterAPIContext context, IExtendedRepository<User, CounterAPIContext> userRepository)
+        public UsersController(IExtendedRepository<User, CounterAPIContext> userRepository)
         {
             _userRepository = userRepository;
         }

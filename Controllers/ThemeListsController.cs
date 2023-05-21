@@ -17,7 +17,7 @@ namespace CounterAPI.Controllers
     {
         private readonly IExtendedRepository<ThemeList, CounterAPIContext> _themeListRepository;
 
-        public ThemeListsController(CounterAPIContext context, IExtendedRepository<ThemeList, CounterAPIContext> themeListRepository)
+        public ThemeListsController(IExtendedRepository<ThemeList, CounterAPIContext> themeListRepository)
         {
             _themeListRepository = themeListRepository;
         }

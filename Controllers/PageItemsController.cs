@@ -18,7 +18,7 @@ namespace CounterAPI.Controllers
     {
         private readonly IRepository<PageItem, PageItemsContext> _pageItemRepository;
 
-        public PageItemsController(PageItemsContext context, IRepository<PageItem, PageItemsContext> pageItemRepository)
+        public PageItemsController(IRepository<PageItem, PageItemsContext> pageItemRepository)
         {
             _pageItemRepository = pageItemRepository;
         }

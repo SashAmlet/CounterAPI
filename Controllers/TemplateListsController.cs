@@ -58,8 +58,14 @@ namespace CounterAPI.Controllers
         {
             try
             {
-                await _templateListRepository.UpdateAsync(id, templateList);
-                return StatusCode(200);
+
+                if (ModelState.IsValid)
+                {
+                    await _templateListRepository.UpdateAsync(id, templateList);
+                    return StatusCode(200);
+                }
+                else
+                    return BadRequest();
             }
             catch (Exception ex)
             {
@@ -73,8 +79,14 @@ namespace CounterAPI.Controllers
         {
             try
             {
-                await _templateListRepository.AddAsync(templateList);
-                return StatusCode(200);
+
+                if (ModelState.IsValid)
+                {
+                    await _templateListRepository.AddAsync(templateList);
+                    return StatusCode(200);
+                }
+                else
+                    return BadRequest();
             }
             catch (Exception ex)
             {

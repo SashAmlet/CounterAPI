@@ -15,12 +15,10 @@ namespace CounterAPI.Controllers
     [ApiController]
     public class LanguageListsController : ControllerBase
     {
-        private readonly CounterAPIContext _context;
-        private readonly IRepository<LanguageList, CounterAPIContext> _languageListRepository;
+        private readonly IExtendedRepository<LanguageList, CounterAPIContext> _languageListRepository;
 
-        public LanguageListsController(CounterAPIContext context, IRepository<LanguageList, CounterAPIContext> languageListRepository)
+        public LanguageListsController(CounterAPIContext context, IExtendedRepository<LanguageList, CounterAPIContext> languageListRepository)
         {
-            _context = context;
             _languageListRepository = languageListRepository;
         }
 
@@ -48,7 +46,7 @@ namespace CounterAPI.Controllers
         {
             try
             {
-                return Ok(await _context.UserLanguages.Where(a=>a.Name == language).Select(b=>b.Id).FirstAsync());
+                return Ok(await _languageListRepository.GetByNameAsync(language));
             }
             catch (ArgumentNullException)
             {

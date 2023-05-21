@@ -15,12 +15,10 @@ namespace CounterAPI.Controllers
     [ApiController]
     public class TemplateListsController : ControllerBase
     {
-        private readonly CounterAPIContext _context;
         private readonly IRepository<TemplateList, CounterAPIContext> _templateListRepository;
 
         public TemplateListsController(CounterAPIContext context, IRepository<TemplateList, CounterAPIContext> templateListRepository)
         {
-            _context = context;
             _templateListRepository = templateListRepository;
         }
 
@@ -46,57 +44,49 @@ namespace CounterAPI.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<TemplateList>> GetTemplateList(int id)
         {
-          if (_context.TemplateLists == null)
-          {
-              return NotFound();
-          }
-            var templateList = await _context.TemplateLists.FindAsync(id);
-
-            if (templateList == null)
+            try
+            {
+                return Ok(await _templateListRepository.GetByIdAsync(id));
+            }
+            catch (ArgumentNullException)
             {
                 return NotFound();
             }
-
-            return templateList;
+            catch
+            {
+                throw;
+            }
         }
 
         // PUT: api/TemplateLists/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTemplateList(int id, TemplateList templateList)
         {
-            if (id != templateList.Id)
+            try
+            {
+                await _templateListRepository.UpdateAsync(id, templateList);
+            }
+            catch (ArgumentNullException)
+            {
+                return NotFound();
+            }
+            catch (ArgumentException)
             {
                 return BadRequest();
             }
-
-            _context.Entry(templateList).State = EntityState.Modified;
-
-            try
+            catch
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TemplateListExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
 
             return NoContent();
         }
 
         // POST: api/TemplateLists
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult> PostTemplateList(TemplateList templateList)
         {
-            if (_context.Users == null)
+            if (_templateListRepository.GetAllAsync() == null)
             {
                 return Problem("Entity set 'CounterAPIContext.Users'  is null.");
             }
@@ -109,25 +99,19 @@ namespace CounterAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteTemplateList(int id)
         {
-            if (_context.TemplateLists == null)
+            try
+            {
+                await _templateListRepository.DeleteAsync(id);
+            }
+            catch (ArgumentNullException)
             {
                 return NotFound();
             }
-            var templateList = await _context.TemplateLists.FindAsync(id);
-            if (templateList == null)
+            catch
             {
-                return NotFound();
+                throw;
             }
-
-            _context.TemplateLists.Remove(templateList);
-            await _context.SaveChangesAsync();
-
             return NoContent();
-        }
-
-        private bool TemplateListExists(int id)
-        {
-            return (_context.TemplateLists?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

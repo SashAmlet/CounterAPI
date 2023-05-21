@@ -1,6 +1,6 @@
 ﻿namespace CounterAPI.Models
 {
-    public partial class User : IEntity
+    public partial class User : IEntity, IName
     {
         public int Id { get; set; }
         public string Name { get; set; } = null!;

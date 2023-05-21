@@ -15,13 +15,11 @@ namespace CounterAPI.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly CounterAPIContext _context;
 
-        private readonly IRepository<User, CounterAPIContext> _userRepository;
+        private readonly IExtendedRepository<User, CounterAPIContext> _userRepository;
 
-        public UsersController(CounterAPIContext context, IRepository<User, CounterAPIContext> userRepository)
+        public UsersController(CounterAPIContext context, IExtendedRepository<User, CounterAPIContext> userRepository)
         {
-            _context = context;
             _userRepository = userRepository;
         }
 
@@ -45,11 +43,11 @@ namespace CounterAPI.Controllers
 
         // GET: api/Users/5
         [HttpGet("{user}")]
-        public async Task<ActionResult<User>> GetUser(string user)
+        public async Task<ActionResult<int>> GetUser(string user)
         {
             try
             {
-                return Ok(await _context.Users.Where(a=>a.Name == user).Select(a=>a.Id).FirstOrDefaultAsync());
+                return Ok(await _userRepository.GetByNameAsync(user));
             }
             catch (ArgumentNullException)
             {
@@ -87,11 +85,10 @@ namespace CounterAPI.Controllers
         }
 
         // POST: api/Users
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult> PostUser(User user)
         {
-            if (_context.Users == null)
+            if (_userRepository.GetAllAsync() == null)
             {
                 return Problem("Entity set 'CounterAPIContext.Users'  is null.");
             }

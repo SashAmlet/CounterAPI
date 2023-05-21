@@ -13,9 +13,9 @@ builder.Services.AddDbContext<CounterAPIContext>(option => option.UseSqlServer(
 builder.Services.AddDbContext<PageItemsContext>(option => option.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnection")
     ));
-builder.Services.AddScoped<IRepository<User, CounterAPIContext>,Repository<User, CounterAPIContext>>();
-builder.Services.AddScoped<IRepository<LanguageList, CounterAPIContext>, Repository<LanguageList, CounterAPIContext>>();
-builder.Services.AddScoped<IRepository<ThemeList, CounterAPIContext>, Repository<ThemeList, CounterAPIContext>>();
+builder.Services.AddScoped<IExtendedRepository<User, CounterAPIContext>,ExtendedRepository<User, CounterAPIContext>>();
+builder.Services.AddScoped<IExtendedRepository<LanguageList, CounterAPIContext>, ExtendedRepository<LanguageList, CounterAPIContext>>();
+builder.Services.AddScoped<IExtendedRepository<ThemeList, CounterAPIContext>, ExtendedRepository<ThemeList, CounterAPIContext>>();
 builder.Services.AddScoped<IRepository<TemplateList, CounterAPIContext>, Repository<TemplateList, CounterAPIContext>>();
 builder.Services.AddScoped<IRepository<PageItem, PageItemsContext>, Repository<PageItem, PageItemsContext>>();
 

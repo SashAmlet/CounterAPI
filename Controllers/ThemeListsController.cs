@@ -15,12 +15,10 @@ namespace CounterAPI.Controllers
     [ApiController]
     public class ThemeListsController : ControllerBase
     {
-        private readonly CounterAPIContext _context;
-        private readonly IRepository<ThemeList, CounterAPIContext> _themeListRepository;
+        private readonly IExtendedRepository<ThemeList, CounterAPIContext> _themeListRepository;
 
-        public ThemeListsController(CounterAPIContext context, IRepository<ThemeList, CounterAPIContext> themeListRepository)
+        public ThemeListsController(CounterAPIContext context, IExtendedRepository<ThemeList, CounterAPIContext> themeListRepository)
         {
-            _context = context;
             _themeListRepository = themeListRepository;
         }
 
@@ -48,7 +46,7 @@ namespace CounterAPI.Controllers
         {
             try
             {
-                return Ok(await _context.UserThemes.Where(a => a.Name == theme).Select(b => b.Id).FirstAsync());
+                return Ok(await _themeListRepository.GetByNameAsync(theme));
             }
             catch (ArgumentNullException)
             {

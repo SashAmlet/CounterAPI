@@ -16,15 +16,11 @@ namespace CounterAPI.Controllers
     [ApiController]
     public class PageItemsController : ControllerBase
     {
-        private readonly PageItemsContext _context;
         private readonly IRepository<PageItem, PageItemsContext> _pageItemRepository;
-        IRepository<LanguageList, CounterAPIContext> _languageListRepository;
 
-        public PageItemsController(PageItemsContext context, IRepository<PageItem, PageItemsContext> pageItemRepository, IRepository<LanguageList, CounterAPIContext> languageListRepository)
+        public PageItemsController(PageItemsContext context, IRepository<PageItem, PageItemsContext> pageItemRepository)
         {
-            _context = context;
             _pageItemRepository = pageItemRepository;
-            _languageListRepository = languageListRepository;
         }
 
         // GET: api/PageItems
@@ -33,18 +29,6 @@ namespace CounterAPI.Controllers
         {
             try
             {
-                /*var languages = await _languageListRepository.GetAllAsync();
-
-                foreach (var language in languages)
-                {
-                    var item = new PageItem();
-                    item.Name = "option";
-                    item.ParentId = 5;
-                    item.Value = language.Name;
-                    item.Text = language.Name;
-                    await _pageItemRepository.AddAsync(item);
-
-                }*/
                 return Ok(await _pageItemRepository.GetAllAsync());
             }
             catch (ArgumentNullException)

@@ -59,13 +59,8 @@ namespace CounterAPI.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
-                {
-                    await _userRepository.UpdateAsync(id, user);
-                    return StatusCode(200);
-                }
-                else
-                    return BadRequest();
+                await _userRepository.UpdateAsync(id, user);
+                return StatusCode(200);
             }
             catch (Exception ex)
             {

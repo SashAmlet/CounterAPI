@@ -60,15 +60,16 @@ namespace CounterAPI.Repository
                 }
             }
         }
-        public async Task DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             var entity = await context.Set<T>().FindAsync(id);
             if (entity == null)
             {
-                throw new ArgumentNullException("The delete failed, there is no such entity");
+                return false;
             }
             context.Remove(entity);
             await context.SaveChangesAsync();
+            return true;
         }
 
         private bool TExists(int id)

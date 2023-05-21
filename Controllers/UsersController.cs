@@ -94,8 +94,8 @@ namespace CounterAPI.Controllers
         {
             try
             {
-                await _userRepository.DeleteAsync(id);
-                return StatusCode(200);
+                bool result = await _userRepository.DeleteAsync(id);
+                return StatusCode(200, result);
             }
             catch (Exception ex)
             {

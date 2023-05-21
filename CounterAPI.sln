@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CounterAPI", "CounterAPI.csproj", "{6E0AD4AD-061A-4488-8561-4CF348F6D0BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APiTests", "..\APiTests\APiTests.csproj", "{E7611E2B-F980-4322-A995-408DF7C3571B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APITests", "..\APiTests\APITests.csproj", "{E7611E2B-F980-4322-A995-408DF7C3571B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

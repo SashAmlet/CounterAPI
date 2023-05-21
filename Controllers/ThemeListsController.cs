@@ -24,37 +24,31 @@ namespace CounterAPI.Controllers
 
         // GET: api/ThemeLists
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ThemeList>>> GetUserThemes()
+        public async Task<IActionResult> GetUserThemes()
         {
             try
             {
-                return Ok(await _themeListRepository.GetAllAsync());
+                var themes = await _themeListRepository.GetAllAsync();
+                return StatusCode(200, themes);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
-            }
-            catch
-            {
-                throw;
+                return BadRequest(ex.Message);
             }
         }
 
         // GET: api/ThemeLists/5
         [HttpGet("{theme}")]
-        public async Task<ActionResult<int>> GetThemeList(string theme)
+        public async Task<IActionResult> GetThemeList(string theme)
         {
             try
             {
-                return Ok(await _themeListRepository.GetByNameAsync(theme));
+                var themes = await _themeListRepository.GetByNameAsync(theme);
+                return StatusCode(200, themes);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
-            }
-            catch
-            {
-                throw;
+                return BadRequest(ex.Message);
             }
         }
     }

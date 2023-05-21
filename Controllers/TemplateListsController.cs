@@ -24,37 +24,31 @@ namespace CounterAPI.Controllers
 
         // GET: api/TemplateLists
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TemplateList>>> GetTemplateLists()
+        public async Task<IActionResult> GetTemplateLists()
         {
             try
             {
-                return Ok(await _templateListRepository.GetAllAsync());
+                var tlists = await _templateListRepository.GetAllAsync();
+                return StatusCode(200, tlists);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
-            }
-            catch
-            {
-                throw;
+                return BadRequest(ex.Message);
             }
         }
 
         // GET: api/TemplateLists/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TemplateList>> GetTemplateList(int id)
+        public async Task<IActionResult> GetTemplateList(int id)
         {
             try
             {
-                return Ok(await _templateListRepository.GetByIdAsync(id));
+                var tlist = await _templateListRepository.GetByIdAsync(id);
+                return StatusCode(200, tlist);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
-            }
-            catch
-            {
-                throw;
+                return BadRequest(ex.Message);
             }
         }
 
@@ -65,34 +59,27 @@ namespace CounterAPI.Controllers
             try
             {
                 await _templateListRepository.UpdateAsync(id, templateList);
+                return StatusCode(200);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest(ex.Message);
             }
-            catch (ArgumentException)
-            {
-                return BadRequest();
-            }
-            catch
-            {
-                throw;
-            }
-
-            return NoContent();
         }
 
         // POST: api/TemplateLists
         [HttpPost]
-        public async Task<ActionResult> PostTemplateList(TemplateList templateList)
+        public async Task<IActionResult> PostTemplateList(TemplateList templateList)
         {
-            if (_templateListRepository.GetAllAsync() == null)
+            try
             {
-                return Problem("Entity set 'CounterAPIContext.Users'  is null.");
+                await _templateListRepository.AddAsync(templateList);
+                return StatusCode(200);
             }
-            await _templateListRepository.AddAsync(templateList);
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/TemplateLists/5
@@ -102,16 +89,12 @@ namespace CounterAPI.Controllers
             try
             {
                 await _templateListRepository.DeleteAsync(id);
+                return StatusCode(200);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
-            return NoContent();
         }
     }
 }

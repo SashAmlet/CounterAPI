@@ -25,37 +25,31 @@ namespace CounterAPI.Controllers
 
         // GET: api/PageItems
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PageItem>>> GetPageItems()
+        public async Task<IActionResult> GetPageItems()
         {
             try
             {
-                return Ok(await _pageItemRepository.GetAllAsync());
+                var items = await _pageItemRepository.GetAllAsync();
+                return StatusCode(200, items);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
-            }
-            catch
-            {
-                throw;
+                return BadRequest(ex.Message);
             }
         }
 
         // GET: api/PageItems/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PageItem>> GetPageItem(int id)
+        public async Task<IActionResult> GetPageItem(int id)
         {
             try
             {
-                return Ok(await _pageItemRepository.GetByIdAsync(id));
+                var item = await _pageItemRepository.GetByIdAsync(id);
+                return StatusCode(200, item);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
-            }
-            catch
-            {
-                throw;
+                return BadRequest(ex.Message);
             }
         }
     }

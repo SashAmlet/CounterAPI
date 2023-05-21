@@ -25,76 +25,62 @@ namespace CounterAPI.Controllers
 
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<IActionResult> GetUsers()
         {
             try
             {
-                return Ok(await _userRepository.GetAllAsync());
+                var users = await _userRepository.GetAllAsync();
+                return StatusCode(200, users);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
-            }
-            catch 
-            {
-                throw;
+                return BadRequest(ex.Message);
             }
         }
 
         // GET: api/Users/5
         [HttpGet("{user}")]
-        public async Task<ActionResult<int>> GetUser(string user)
+        public async Task<IActionResult> GetUser(string user)
         {
             try
             {
-                return Ok(await _userRepository.GetByNameAsync(user));
+                var User = await _userRepository.GetByNameAsync(user);
+                return StatusCode(200, User);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
-            }
-            catch
-            {
-                throw;
+                return BadRequest(ex.Message);
             }
         }
 
         // PUT: api/Users/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
             try
             {
                 await _userRepository.UpdateAsync(id, user);
+                return StatusCode(200);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest(ex.Message);
             }
-            catch (ArgumentException)
-            {
-                return BadRequest();
-            }
-            catch 
-            {
-                throw;
-            }
-
-            return NoContent();
         }
 
         // POST: api/Users
         [HttpPost]
-        public async Task<ActionResult> PostUser(User user)
+        public async Task<IActionResult> PostUser(User user)
         {
-            if (_userRepository.GetAllAsync() == null)
+            try
             {
-                return Problem("Entity set 'CounterAPIContext.Users'  is null.");
+                await _userRepository.AddAsync(user);
+                return StatusCode(200);
             }
-            await _userRepository.AddAsync(user);
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/Users/5
@@ -104,16 +90,12 @@ namespace CounterAPI.Controllers
             try
             {
                 await _userRepository.DeleteAsync(id);
+                return StatusCode(200);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
+                return BadRequest(ex.Message);
             }
-            catch
-            {
-                throw;
-            }
-            return NoContent();
         }
     }
 }

@@ -28,15 +28,12 @@ namespace CounterAPI.Controllers
         {
             try
             {
-                return Ok(await _languageListRepository.GetAllAsync());
+                var languages = await _languageListRepository.GetAllAsync();
+                return StatusCode(200, languages);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
-            }
-            catch
-            {
-                throw;
+                return BadRequest(ex.Message);
             }
         }
 
@@ -46,15 +43,12 @@ namespace CounterAPI.Controllers
         {
             try
             {
-                return Ok(await _languageListRepository.GetByNameAsync(language));
+                var Language = await _languageListRepository.GetByNameAsync(language);
+                return StatusCode(200, Language);
             }
-            catch (ArgumentNullException)
+            catch (Exception ex)
             {
-                return NotFound();
-            }
-            catch
-            {
-                throw;
+                return BadRequest(ex.Message);
             }
         }
     }

@@ -24,7 +24,7 @@ namespace CounterAPI.Controllers
 
         // GET: api/LanguageLists
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<LanguageList>>> GetUserLanguages()
+        public async Task<IActionResult> GetUserLanguages()
         {
             try
             {
@@ -39,7 +39,7 @@ namespace CounterAPI.Controllers
 
         // GET: api/LanguageLists/5
         [HttpGet("{language}")]
-        public async Task<ActionResult<int>> GetLanguageId(string language)
+        public async Task<IActionResult> GetLanguageId(string language)
         {
             try
             {
